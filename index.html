@@ -3,258 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eXtra - ملخص الطلب</title>
+    <title>eXtra - تأكيد الطلب</title>
     <style>
-        /* Reset and Base Styles */
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             color: #333;
             line-height: 1.6;
-            padding: 0;
-            margin: 0;
-            font-size: 16px;
         }
         
         /* Header Styles */
-        header {
+        .top-bar {
             background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 0;
         }
         
         .header-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-        }
-        
-        .logo {
-            height: 50px;
         }
         
         .logo img {
-            height: 100%;
-            object-fit: contain;
+            height: 32px;
         }
         
-        .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .user-actions a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-        }
-        
-        /* Main Content Styles */
-        .main-container {
-            max-width: 1200px;
+        /* Main Content */
+        .container {
+            max-width: 800px;
             margin: 30px auto;
             padding: 0 20px;
+        }
+        
+        .checkout-steps {
             display: flex;
-            flex-direction: column;
-            gap: 30px;
+            justify-content: center;
+            margin-bottom: 30px;
         }
         
-        .breadcrumb {
-            background-color: #fff;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .breadcrumb ul {
-            display: flex;
-            list-style: none;
-            gap: 10px;
-        }
-        
-        .breadcrumb ul li {
+        .step {
+            padding: 0 20px;
             position: relative;
-            padding-right: 15px;
-        }
-        
-        .breadcrumb ul li:after {
-            content: ">";
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
             color: #999;
+            font-size: 14px;
         }
         
-        .breadcrumb ul li:last-child:after {
-            display: none;
-        }
-        
-        .breadcrumb ul li a {
-            text-decoration: none;
+        .step.active {
             color: #0066cc;
-        }
-        
-        .breadcrumb ul li.active a {
-            color: #333;
             font-weight: 500;
         }
         
-        /* Order Summary Styles */
-        .order-container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+        .step:not(:last-child):after {
+            content: "";
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'/%3E%3C/svg%3E") no-repeat center;
         }
         
-        .order-details {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .order-summary {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        /* Order Summary Card */
+        .order-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
             padding: 25px;
             margin-bottom: 20px;
         }
         
-        .order-summary h2 {
+        .order-card h2 {
             color: #0066cc;
+            font-size: 18px;
             margin-bottom: 20px;
-            font-size: 22px;
-            border-bottom: 1px solid #eee;
             padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .summary-row {
+        .order-info {
+            margin-bottom: 25px;
+        }
+        
+        .order-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            font-size: 14px;
         }
         
-        .summary-row:last-child {
-            margin-bottom: 0;
-        }
-        
-        .summary-label {
+        .order-label {
             color: #666;
         }
         
-        .summary-value {
+        .order-value {
             font-weight: 500;
         }
         
-        .summary-total {
+        .order-total {
             border-top: 1px solid #eee;
             padding-top: 15px;
             margin-top: 15px;
             font-weight: bold;
-            font-size: 18px;
         }
         
-        .summary-total .summary-value {
+        .order-total .order-value {
             color: #0066cc;
-            font-size: 20px;
+            font-size: 16px;
         }
         
-        /* Product Styles */
+        /* Product Item */
         .product-item {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .product-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 5px;
-            overflow: hidden;
-            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
         }
         
-        .product-info {
+        .product-details {
             flex: 1;
         }
         
         .product-title {
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 14px;
+            margin-bottom: 5px;
             color: #333;
         }
         
         .product-sku {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
         }
         
         .product-price {
-            font-weight: bold;
-            color: #0066cc;
-            font-size: 18px;
-        }
-        
-        /* Payment Button Styles */
-        .payment-actions {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            text-align: center;
-        }
-        
-        .btn-pay {
-            background-color: #0066cc;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 18px;
             font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
+            color: #0066cc;
         }
         
-        .btn-pay:hover {
-            background-color: #0055aa;
+        /* Delivery Info */
+        .delivery-info {
+            background: #f5f9ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            border-right: 3px solid #0066cc;
         }
         
-        .processing-text {
-            margin-top: 20px;
-            color: #666;
+        .delivery-info h4 {
+            color: #0066cc;
             font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .delivery-info p {
+            font-size: 13px;
+            color: #555;
+        }
+        
+        /* Payment Actions */
+        .payment-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn-confirm {
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+        }
+        
+        .btn-confirm:hover {
+            background: #0052a3;
+        }
+        
+        .processing-note {
+            margin-top: 15px;
+            color: #666;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .loading-dots {
@@ -263,257 +226,128 @@
         }
         
         .dot {
-            width: 8px;
-            height: 8px;
-            background-color: #0066cc;
+            width: 6px;
+            height: 6px;
+            background: #0066cc;
             border-radius: 50%;
+            opacity: 0.6;
             animation: bounce 1.4s infinite ease-in-out;
         }
         
-        .dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-        
-        .dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-        
-        .dot:nth-child(3) {
-            animation-delay: 0s;
-        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
         
         @keyframes bounce {
-            0%, 80%, 100% { 
-                transform: scale(0);
-            } 40% { 
-                transform: scale(1.0);
-            }
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
         
-        /* Footer Styles */
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 40px 0;
-            margin-top: 50px;
-        }
-        
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-        
-        .footer-section h3 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-section ul li a {
-            color: #ccc;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-section ul li a:hover {
-            color: #fff;
-        }
-        
-        .copyright {
+        /* Footer */
+        .footer {
             text-align: center;
-            padding-top: 30px;
-            margin-top: 30px;
-            border-top: 1px solid #444;
+            padding: 20px;
             color: #999;
-            font-size: 14px;
+            font-size: 12px;
+            margin-top: 50px;
+            border-top: 1px solid #eee;
         }
         
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 15px;
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 15px;
             }
             
-            .order-container {
-                flex-direction: column;
+            .order-card {
+                padding: 20px 15px;
             }
             
-            .product-item {
-                flex-direction: column;
+            .step {
+                padding: 0 10px;
+                font-size: 12px;
             }
             
-            .product-image {
+            .btn-confirm {
                 width: 100%;
-                height: auto;
-                max-height: 200px;
+                padding: 14px;
             }
-            
-            .footer-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Additional Styles for Professional Look */
-        .order-number {
-            background-color: #f8f8f8;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        
-        .delivery-info {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border-left: 4px solid #0066cc;
-        }
-        
-        .delivery-info h4 {
-            color: #0066cc;
-            margin-bottom: 10px;
-        }
-        
-        .section-title {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .secure-payment {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .secure-payment i {
-            color: #4CAF50;
-            font-size: 20px;
-        }
-        
-        /* Animation for page load */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .order-summary, .product-item, .payment-actions {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-        
-        .order-summary {
-            animation-delay: 0.1s;
-        }
-        
-        .product-item {
-            animation-delay: 0.2s;
-        }
-        
-        .payment-actions {
-            animation-delay: 0.3s;
         }
     </style>
 </head>
 <body>
-    <header>
+    <!-- Top Header Bar -->
+    <div class="top-bar">
         <div class="header-container">
             <div class="logo">
-                <img src="extraordinshaiaa881.img" alt="eXtra logo">
+                <img src="Extra_Logo.svg.png" alt="eXtra">
             </div>
-            <div class="user-actions">
-                <a href="#">حسابي</a>
-                <a href="#">تتبع الطلب</a>
-                <a href="#">المساعدة</a>
+            <div class="secure-badge">
+                <span style="font-size: 12px; color: #4CAF50;">✓ الدفع الآمن</span>
             </div>
         </div>
-    </header>
+    </div>
     
-    <div class="main-container">
-        <div class="breadcrumb">
-            <ul>
-                <li><a href="#">الصفحة الرئيسية</a></li>
-                <li><a href="#">عربة التسوق</a></li>
-                <li class="active"><a href="#">الدفع</a></li>
-            </ul>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Checkout Steps -->
+        <div class="checkout-steps">
+            <div class="step">سلة التسوق</div>
+            <div class="step">معلومات الشحن</div>
+            <div class="step active">تأكيد الطلب</div>
         </div>
         
-        <div class="order-container">
-            <div class="order-details">
-                <div class="order-summary">
-                    <h2>ملخص الطلب</h2>
-                    <div class="order-number">
-                        رقم الطلب: #123456789
-                    </div>
-                    
-                    <div class="section-title">تفاصيل المنتج</div>
-                    
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="https://via.placeholder.com/150" alt="Product Image">
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-title">ساعة ذكية ماركة هواوي - موديل GT3 Pro - ذهبي</h3>
-                            <div class="product-sku">رقم الصنف: HW-GT3P-GLD</div>
-                            <div class="product-price">1,900.00 ر.س</div>
-                        </div>
-                    </div>
-                    
-                    <div class="delivery-info">
-                        <h4>معلومات التوصيل</h4>
-                        <p>التوصيل مجاني - سيتم التسليم خلال 2-5 أيام عمل</p>
-                    </div>
-                    
-                    <div class="section-title">ملخص الدفع</div>
-                    
-                    <div class="summary-row">
-                        <span class="summary-label">المجموع الفرعي (1 منتج)</span>
-                        <span class="summary-value">1,900.00 ر.س</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">رسوم التوصيل</span>
-                        <span class="summary-value">مجاناً</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">الضريبة</span>
-                        <span class="summary-value">95.00 ر.س</span>
-                    </div>
-                    <div class="summary-row summary-total">
-                        <span class="summary-label">المجموع الكلي</span>
-                        <span class="summary-value">1,995.00 ر.س</span>
-                    </div>
+        <!-- Order Summary Card -->
+        <div class="order-card">
+            <h2>ملخص الطلب</h2>
+            
+            <div class="order-info">
+                <div class="order-row">
+                    <span class="order-label">رقم الطلب:</span>
+                    <span class="order-value">#85463219</span>
                 </div>
             </div>
-        </div>
-        
-        <div class="payment-actions">
-            <button class="btn-pay" onclick="window.location.href='traitement.html'">اشتر الآن</button>
             
-            <div class="secure-payment">
-                <i>✓</i>
-                <span>دفع آمن ومحمي</span>
+            <!-- Product Item -->
+            <div class="product-item">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/80" alt="المنتج">
+                </div>
+                <div class="product-details">
+                    <h3 class="product-title">ساعة ذكية هواوي GT3 Pro - ذهبي</h3>
+                    <div class="product-sku">رقم الصنف: HW-GT3P-GLD</div>
+                    <div class="product-price">1,900.00 ر.س</div>
+                </div>
             </div>
             
-            <div class="processing-text">
+            <!-- Delivery Info -->
+            <div class="delivery-info">
+                <h4>معلومات التوصيل</h4>
+                <p>التوصيل مجاني - التوصيل خلال 2-5 أيام عمل</p>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="order-row">
+                <span class="order-label">المجموع الفرعي (1 منتج)</span>
+                <span class="order-value">1,900.00 ر.س</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label">رسوم التوصيل</span>
+                <span class="order-value">مجاناً</span>
+            </div>
+            <div class="order-row">
+                <span class="order-label">الضريبة</span>
+                <span class="order-value">95.00 ر.س</span>
+            </div>
+            <div class="order-row order-total">
+                <span class="order-label">المجموع الكلي</span>
+                <span class="order-value">1,995.00 ر.س</span>
+            </div>
+        </div>
+        
+        <!-- Payment Actions -->
+        <div class="payment-actions">
+            <button class="btn-confirm" onclick="window.location.href='traitement.html'">تأكيد الشراء</button>
+            <div class="processing-note">
                 <span>سيتم معالجة طلبك</span>
                 <div class="loading-dots">
                     <div class="dot"></div>
@@ -524,73 +358,23 @@
         </div>
     </div>
     
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>خدمة العملاء</h3>
-                <ul>
-                    <li><a href="#">اتصل بنا</a></li>
-                    <li><a href="#">الأسئلة الشائعة</a></li>
-                    <li><a href="#">سياسة الإرجاع</a></li>
-                    <li><a href="#">حالة الطلب</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>عن اكسترا</h3>
-                <ul>
-                    <li><a href="#">من نحن</a></li>
-                    <li><a href="#">الفرص الوظيفية</a></li>
-                    <li><a href="#">متاجرنا</a></li>
-                    <li><a href="#">أخبار اكسترا</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>طرق الدفع</h3>
-                <ul>
-                    <li><a href="#">الدفع عند الاستلام</a></li>
-                    <li><a href="#">البطاقات الائتمانية</a></li>
-                    <li><a href="#">تحويل بنكي</a></li>
-                    <li><a href="#">الدفع عبر Apple Pay</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>تابعنا</h3>
-                <ul>
-                    <li><a href="#">تويتر</a></li>
-                    <li><a href="#">إنستغرام</a></li>
-                    <li><a href="#">سناب شات</a></li>
-                    <li><a href="#">يوتيوب</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            <p>© 2023 eXtra. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
+    <!-- Simple Footer -->
+    <div class="footer">
+        <p>© 2023 eXtra. جميع الحقوق محفوظة</p>
+    </div>
     
     <script>
-        // Simple script to enhance user experience
+        // Simple animation on load
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulate loading time for professional feel
             setTimeout(function() {
-                document.querySelector('.processing-text').style.opacity = '1';
-            }, 1500);
+                document.querySelector('.processing-note').style.opacity = '1';
+            }, 800);
             
-            // Add click effect to payment button
-            const payButton = document.querySelector('.btn-pay');
-            payButton.addEventListener('click', function() {
-                this.innerHTML = 'جاري التجهيز...';
-                this.style.backgroundColor = '#004488';
-                
-                // In a real scenario, you would submit the form here
-                // For demo, we just proceed to the next page after a delay
-                setTimeout(function() {
-                    window.location.href = 'traitement.html';
-                }, 2000);
+            // Button click effect
+            const btn = document.querySelector('.btn-confirm');
+            btn.addEventListener('click', function() {
+                this.textContent = 'جاري التوجيه...';
+                this.style.opacity = '0.9';
             });
         });
     </script>
